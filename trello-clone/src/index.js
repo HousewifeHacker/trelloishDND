@@ -1,6 +1,21 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
+import styled from 'styled-components';
 import initialData from './initial-data';
+
+const Container = styled.div`
+    margin-bottom: 8px;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+    padding: 8px;
+    background-color: white;
+`;
+const Title = styled.h3`
+    padding: 8px;
+`;
+const TaskList = styled.div`
+    padding: 8px;
+`;
 
 class App extends Component {
     state = initialData;
@@ -18,12 +33,14 @@ class App extends Component {
 class Column extends Component {
     render() {
         return (
-            <div>
-                <h3>{this.props.column.title}</h3>
-                {this.props.tasks.map((task, index) => (
-                    <Task key={task.id} task={task} />
-                ))}
-            </div>
+            <Container>
+                <Title>{this.props.column.title}</Title>
+                <TaskList>
+                    {this.props.tasks.map((task, index) => (
+                       <Task key={task.id} task={task} />
+                    ))}
+                </TaskList>
+            </Container>
         );
     }
 }
@@ -31,9 +48,9 @@ class Column extends Component {
 class Task extends Component {
     render() {
         return (
-            <div>
+            <Container>
                 <h4>{this.props.task.title}</h4>
-            </div>
+            </Container>
         )
     }
 }
