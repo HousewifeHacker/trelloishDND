@@ -22,7 +22,30 @@ class App extends Component {
     state = initialData;
 
     onDragEnd = result => {
-        // reorder column
+        const { destination, source, draggableId } = result;
+        // dropped out of droppable area
+        if (!destination) {return}
+        // dropped in same location
+        if (
+            destination.droppableId === source.droppableId &&
+            destination.index === source.index
+        ) {return}
+
+        // remove from source, move into destination
+        const column = this.state.columns[source.droppableId];
+        const newTaskIds = column.taskIds.slice();
+        newTaskIds.splice(source.index, 1);
+        newTaskIds.splice(destination.index, 0, draggableId);
+        const newColumn = {
+            ...column,
+            taskIds: newTaskIds
+        };
+        this.setState({
+            columns: {
+                ...this.state.columns,
+                [newColumn.id]: newColumn,
+            }
+        });
     }
     render() {
         /* DragDropContext has optional methods onDragStart and onDragUpdate */
