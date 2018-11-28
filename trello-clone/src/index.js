@@ -9,13 +9,15 @@ const Container = styled.div`
     border: 1px solid lightgrey;
     border-radius: 2px;
     padding: 8px;
-    background-color: white;
+    background-color: ${props => (props.isDragging ? "lightgreen" : "white")};
 `;
 const Title = styled.h3`
     padding: 8px;
 `;
+// background color depends on snapshot
 const TaskList = styled.div`
     padding: 8px;
+    background-color: ${props => (props.isDraggingOver ? "skyblue" : "white")};
 `;
 
 class App extends Component {
@@ -73,6 +75,7 @@ class Column extends Component {
                         <TaskList
                             ref={provided.innerRef}
                             {...provided.droppableProps}
+                            isDraggingOver={snapshot.isDraggingOver}
                         >
                             {this.props.tasks.map((task, idx) => {
                                 return <Task key={task.id} task={task} index={idx}/>
@@ -89,17 +92,18 @@ class Column extends Component {
 class Task extends Component {
     render() {
         return (
+            // requirements similar to droppable, except index too
             <Draggable draggableId={this.props.task.id} index={this.props.index}>
-                {(provided) => (
+                {(provided, snapshot) => (
                     <Container
                         ref={provided.innerRef}
                         {...provided.dragHandleProps}
                         {...provided.draggableProps}
+                        isDragging={snapshot.isDragging}
                     >
                         <h4>{this.props.task.title}</h4>
                     </Container>
                 )}
-                
             </Draggable>
         )
     }
