@@ -5,11 +5,22 @@ import styled from 'styled-components';
 import initialData from './initial-data';
 
 const Container = styled.div`
+    display: flex;
+`;
+const TaskContainer = styled.div`
     margin-bottom: 8px;
     border: 1px solid lightgrey;
     border-radius: 2px;
     padding: 8px;
     background-color: ${props => (props.isDragging ? "lightgreen" : "white")};
+`;
+const ColumnContainer = styled.div`
+    margin: 8px;
+    border: 1px solid lightgrey;
+    padding: 8px;
+    width: 20%;
+    display: flex;
+    flex-direction: column;
 `;
 const Title = styled.h3`
     padding: 8px;
@@ -18,6 +29,7 @@ const Title = styled.h3`
 const TaskList = styled.div`
     padding: 8px;
     background-color: ${props => (props.isDraggingOver ? "skyblue" : "white")};
+    flex-grow: 1;
 `;
 
 class App extends Component {
@@ -53,12 +65,14 @@ class App extends Component {
         /* DragDropContext has optional methods onDragStart and onDragUpdate */
         return (
             <DragDropContext onDragEnd={this.onDragEnd}>
-                {this.state.columnOrder.map((columnId) => {
-                    const column = this.state.columns[columnId];
-                    const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
+                <Container>
+                    {this.state.columnOrder.map((columnId) => {
+                        const column = this.state.columns[columnId];
+                        const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
 
-                    return <Column key={column.id} column={column} tasks={tasks} />;
-                })}
+                        return <Column key={column.id} column={column} tasks={tasks} />;
+                    })}
+                </Container>
             </DragDropContext>
         );
     }
@@ -68,7 +82,7 @@ class Column extends Component {
     render() {
         /* Droppable requires droppableId and returns a function, render props pattern */
         return (
-            <Container>
+            <ColumnContainer>
                 <Title>{this.props.column.title}</Title>
                 <Droppable droppableId={this.props.column.id}>
                     {(provided, snapshot) => (
@@ -84,7 +98,7 @@ class Column extends Component {
                         </TaskList>
                     )}
                 </Droppable>
-            </Container>
+            </ColumnContainer>
         );
     }
 }
@@ -95,14 +109,14 @@ class Task extends Component {
             // requirements similar to droppable, except index too
             <Draggable draggableId={this.props.task.id} index={this.props.index}>
                 {(provided, snapshot) => (
-                    <Container
+                    <TaskContainer
                         ref={provided.innerRef}
                         {...provided.dragHandleProps}
                         {...provided.draggableProps}
                         isDragging={snapshot.isDragging}
                     >
                         <h4>{this.props.task.title}</h4>
-                    </Container>
+                    </TaskContainer>
                 )}
             </Draggable>
         )
