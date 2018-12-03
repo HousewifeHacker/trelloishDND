@@ -30,6 +30,7 @@ const TaskList = styled.div`
     padding: 8px;
     background-color: ${props => (props.isDraggingOver ? "skyblue" : "white")};
     flex-grow: 1;
+    min-height: 100px;
 `;
 
 class App extends Component {
@@ -46,20 +47,41 @@ class App extends Component {
         ) {return}
 
         // remove from source, move into destination
-        const column = this.state.columns[source.droppableId];
-        const newTaskIds = column.taskIds.slice();
-        newTaskIds.splice(source.index, 1);
-        newTaskIds.splice(destination.index, 0, draggableId);
-        const newColumn = {
-            ...column,
-            taskIds: newTaskIds
-        };
-        this.setState({
-            columns: {
-                ...this.state.columns,
-                [newColumn.id]: newColumn,
+        const startColumn = this.state.columns[source.droppableId];
+        const startTaskIds = startColumn.taskIds.slice();
+        startTaskIds.splice(source.index, 1);
+        const endColumn = this.state.columns[destination.droppableId];
+        if (startColumn === endColumn ) {
+            startTaskIds.splice(destination.index, 0, draggableId);
+            const newStartColumn = {
+                ...startColumn,
+                taskIds: startTaskIds
+            };
+            this.setState({
+                columns: {
+                    ...this.state.columns,
+                    [startColumn.id]: newStartColumn,
+                }
+            });
+        } else {
+            const newStartColumn = {
+                ...startColumn,
+                taskIds: startTaskIds
             }
-        });
+            const endTaskIds = endColumn.taskIds.slice();
+            endTaskIds.splice(destination.index, 0, draggableId);
+            const newEndColumn = {
+                ...endColumn,
+                taskIds: endTaskIds
+            };
+            this.setState({
+                columns: {
+                    ...this.state.columns,
+                    [startColumn.id]: newStartColumn,
+                    [endColumn.id]: newEndColumn,
+                }
+            });
+        }
     }
     render() {
         /* DragDropContext has optional methods onDragStart and onDragUpdate */
